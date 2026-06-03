@@ -20,8 +20,9 @@ class VetApp(ctk.CTk):
     def __init__(self):
         super().__init__()
         self.title("Clinic Name - Daily Patient Log")
-        self.geometry("650x610")
+        #self.geometry("950x910+0+0")
         self.resizable(False, False)
+        self.attributes("-fullscreen", True)
 
         # Private attribute - only accessible through methods (encapsulation)
         self._notes_window = None       # None means "not open yet"

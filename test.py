@@ -5,7 +5,7 @@ import os
 os.system('cls' if os.name == "nt" else 'reset')
 
 details = input("enter account and pwd ").split()
-if len(poop) != 2:
+if len(details) != 2:
     print("bro who u fooling")
 else:
     name = details[0].strip()

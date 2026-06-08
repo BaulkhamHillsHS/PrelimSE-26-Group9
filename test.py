@@ -21,11 +21,15 @@ else:
             if row[0] == name and row[2] == pwd:
                 multiCurrentProfiles.append(row[4])
     try:
-        if len(profileList) >= 2:
-            print(f"There are {len(profileList)} profiles: {profileList}. Which will you access?")
-
+        if len(multiCurrentProfiles) >= 2:
+            print(f"There are {len(multiCurrentProfiles)} profiles: {multiCurrentProfiles}. Which will you access?")
         else:
-            currentProfile = profileList
-            print(f"Logging in as {currentProfile[4]}")
+            with open("data.csv", "r") as csv_file:
+                data = csv.reader(csv_file)
+                for row in data:
+                    if row[0] == name and row[2] == pwd:
+                        currentProfile = row
+                        print("i scream")
+            print(len(currentProfile))
     except NameError:
         print("not found")

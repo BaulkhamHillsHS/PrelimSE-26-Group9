@@ -11,6 +11,23 @@ ctk.set_default_color_theme("blue")
 
 import csv
 
+class HelloEverybodyMyNameIsMarkiplier(ctk.CTk):
+    def __init__(self):
+        super().__init__()
+        self.title("Hello everybody my name is markiplier")
+        self.geometry("500x600+700+50")
+        self.resizable(False, False)
+        self._login_build_ui()
+    
+    def _login_build_ui(self):
+        self.frame_input = ctk.CTkFrame(self)
+        self.frame_input.pack(fill=ctk.X, padx=20, pady=(20, 10))
+        self._login_build_inputs()
+    
+    def _login_build_inputs(self):
+        self.username_input = ctk.CTkEntry(self.frame_input, width=160, placeholder_text="Username")
+        self.username_input.grid(row = 2, column = 2, padx = 20, pady = 20)
+
 class VetApp(ctk.CTk):
     """
     Daily patient log.
@@ -378,5 +395,7 @@ class PatientRecord:
 
 
 if __name__ == "__main__":
+    appy = HelloEverybodyMyNameIsMarkiplier()
+    appy.mainloop()    
     app = VetApp()
     app.mainloop()

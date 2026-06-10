@@ -22,7 +22,8 @@ else:
                 multiCurrentProfiles.append(row[4])
     try:
         if len(multiCurrentProfiles) >= 2:
-            print(f"There are {len(multiCurrentProfiles)} profiles: {multiCurrentProfiles}. Which will you access?")
+            profile = input(f"There are {len(multiCurrentProfiles)} profiles: {multiCurrentProfiles}. Which will you access? ")
+            
         else:
             with open("data.csv", "r") as csv_file:
                 data = csv.reader(csv_file)

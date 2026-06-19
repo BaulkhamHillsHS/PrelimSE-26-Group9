@@ -4,12 +4,11 @@ import tkinter as tk
 import time
 import os
 from tkinter import filedialog, messagebox
+import csv
 #import god as pleasesavethisproject
 
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("blue")
-
-import csv
 
 class HelloEverybodyMyNameIsMarkiplier(ctk.CTk):
     def __init__(self):

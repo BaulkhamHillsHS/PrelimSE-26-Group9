@@ -4,6 +4,7 @@ import tkinter as tk
 import time
 import os
 from tkinter import filedialog, messagebox
+import csv
 #import god as pleasesavethisproject
 
 ctk.set_appearance_mode("dark")
@@ -17,7 +18,7 @@ class HelloEverybodyMyNameIsMarkiplier(ctk.CTk):
     def __init__(self):
         super().__init__()
         self.title("Hello everybody my name is markiplier")
-        self.geometry("500x600+700+50")
+        self.geometry(f"500x600+700+50")
         self.resizable(False, False)
         self._login_build_ui()
         self.logged_in = logged_in

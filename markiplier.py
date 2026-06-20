@@ -5,6 +5,7 @@ import time
 import os
 from tkinter import filedialog, messagebox
 import csv
+from PIL import Image
 #import god as pleasesavethisproject
 
 ctk.set_appearance_mode("dark")
@@ -60,7 +61,8 @@ Nights At Freddy's""").grid(row = 0, column = 0, padx = 20, pady = 20, sticky = 
         self.password_input.grid(row = 2, column = 0, padx = 20, pady = 5, sticky = "n")
         self.button = ctk.CTkButton(self.frame_input, width = 160, height = 28, text = "bite of 87", command=self.button_pressed)
         self.button.grid(row = 4, column = 0, padx = 20, pady = 20, sticky = "n")
-        self.check_label = ctk.CTkLabel(self.frame_input, text = "", anchor = "w", justify = "left").grid(row = 3, column = 0, padx = 20, pady = 0, sticky = "w")
+        self.check_label = ctk.CTkLabel(self.frame_input, text = "", anchor = "w", justify = "left")
+        self.check_label.grid(row = 3, column = 0, padx = 20, pady = 20, sticky = "n")
         
 class AndWelcomBackToFiveNightsAtFreddys(ctk.CTk):
     def __init__(self):
@@ -68,8 +70,15 @@ class AndWelcomBackToFiveNightsAtFreddys(ctk.CTk):
         self.title("butcheks")
         self.geometry("500x600+700+50")
         self.resizable(False, False)
+        self.main_screen_build()
     def main_screen(self):
-        pass
+        profiles = ['1', '2', '3']
+        profile_checker = ctk.CTkComboBox(self.frame_main, values = profiles)
+        profile_checker.pack()
+    def main_screen_build(self):
+        self.frame_main = ctk.CTkFrame(self)
+        self.frame_main.pack(fill=ctk.X, padx=(260,20), pady=(30, 0))
+        self.main_screen()
 
 if __name__ == "__main__":
     markiplier = HelloEverybodyMyNameIsMarkiplier()

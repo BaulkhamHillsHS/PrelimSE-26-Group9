@@ -51,22 +51,29 @@ class HelloEverybodyMyNameIsMarkiplier(ctk.CTk):
     
     def _login_build_ui(self):
         self.frame_input = ctk.CTkFrame(self)
-        self.frame_input.pack(fill=ctk.X, padx=(260,20), pady=(30, 0))
+        self.frame_input.pack(fill = ctk.X, padx = (260,20), pady = (30, 0))
         self._login_build_inputs()
-    
+
+    # Builds login screen
     def _login_build_inputs(self):
         self.login_label = ctk.CTkLabel(self.frame_input, text = """Hello everybody my name
 is Markiplier and
 welcome back to Five
-Nights At Freddy's""").grid(row = 0, column = 0, padx = 20, pady = 20, sticky = "n")
+Nights At Freddy's""").grid(row = 0, column = 1, padx = 20, pady = 20, sticky = "n")
         self.username_input = ctk.CTkEntry(self.frame_input, width = 160, placeholder_text="Username")
-        self.username_input.grid(row = 1, column = 0, padx = 20, pady = 10, sticky = "n")
+        self.username_input.grid(row = 1, column = 1, padx = 20, pady = 10, sticky = "n")
         self.password_input = ctk.CTkEntry(self.frame_input, width = 160, placeholder_text="Password")
-        self.password_input.grid(row = 2, column = 0, padx = 20, pady = 5, sticky = "n")
+        self.password_input.grid(row = 2, column = 1, padx = 20, pady = 5, sticky = "n")
         self.button = ctk.CTkButton(self.frame_input, width = 160, height = 28, text = "bite of 87", command=self.button_pressed)
-        self.button.grid(row = 4, column = 0, padx = 20, pady = 20, sticky = "n")
+        self.button.grid(row = 4, column = 1, padx = 20, pady = 20, sticky = "n")
         self.check_label = ctk.CTkLabel(self.frame_input, text = "Input username and password", anchor = "w", justify = "left")
-        self.check_label.grid(row = 3, column = 0, padx = 20, pady = 0, sticky = "n")
+        self.check_label.grid(row = 3, column = 1, padx = 20, pady = 0, sticky = "n")
+        
+        # doesnt work
+        self.login_image = ctk.CTkImage(light_image = Image.open("images/Markiplier.png"), dark_image = Image.open("images/Markiplier.png"), size = (100, 100))
+        self.login_image_label = ctk.CTkLabel(self.frame_input, text = "", image = self.login_image)
+        self.login_image_label.grid(row = 0, column = 0, rowspan = 5, padx = 20, pady = 20)
+    
         
 class AndWelcomBackToFiveNightsAtFreddys(ctk.CTk):
     def __init__(self):

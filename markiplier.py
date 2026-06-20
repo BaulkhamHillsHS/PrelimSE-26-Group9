@@ -12,11 +12,6 @@ from PIL import Image
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("blue")
 
-# Screen information
-winfo = tk.Tk()
-winfo.withdraw()
-print(winfo.winfo_screenwidth())
-
 # Default state
 logged_in = False
 
@@ -25,7 +20,7 @@ class HelloEverybodyMyNameIsMarkiplier(ctk.CTk):
     def __init__(self):
         super().__init__()
         self.title("Hello everybody my name is markiplier")
-        self.geometry(f"500x360+" + str((winfo.winfo_screenwidth() - 600)) + "+" + str((winfo.winfo_screenheight() / 2 - 250)))
+        self.geometry(f"450x340+500+200")
         self.resizable(False, False)
         self._login_build_ui()
         self.logged_in = logged_in
@@ -51,7 +46,7 @@ class HelloEverybodyMyNameIsMarkiplier(ctk.CTk):
     
     def _login_build_ui(self):
         self.frame_input = ctk.CTkFrame(self)
-        self.frame_input.pack(fill = ctk.X, padx = (260,20), pady = (30, 0))
+        self.frame_input.pack(fill = ctk.X, padx = (20,20), pady = (30, 0))
         self._login_build_inputs()
 
     # Builds login screen
@@ -69,13 +64,12 @@ Nights At Freddy's""").grid(row = 0, column = 1, padx = 20, pady = 20, sticky = 
         self.check_label = ctk.CTkLabel(self.frame_input, text = "Input username and password", anchor = "w", justify = "left")
         self.check_label.grid(row = 3, column = 1, padx = 20, pady = 0, sticky = "n")
         
-        # doesnt work
-        self.login_image = ctk.CTkImage(light_image = Image.open("images/Markiplier.png"), dark_image = Image.open("images/Markiplier.png"), size = (100, 100))
+        self.login_image = ctk.CTkImage(light_image = Image.open("images/Markiplier.png"), dark_image = Image.open("images/Markiplier.png"), size = (150, 100))
         self.login_image_label = ctk.CTkLabel(self.frame_input, text = "", image = self.login_image)
         self.login_image_label.grid(row = 0, column = 0, rowspan = 5, padx = 20, pady = 20)
     
-        
-class AndWelcomBackToFiveNightsAtFreddys(ctk.CTk):
+
+class AndWelcomBackToFiveNightsAtFreddys(ctk.CTkToplevel):
     def __init__(self):
         super().__init__()
         self.title("butcheks")

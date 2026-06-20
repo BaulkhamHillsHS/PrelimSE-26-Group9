@@ -20,6 +20,8 @@ print(winfo.winfo_screenwidth())
 # Default state
 logged_in = False
 
+profiles_and_ages = {}
+
 # Login window
 class HelloEverybodyMyNameIsMarkiplier(ctk.CTk):
     def __init__(self):
@@ -42,12 +44,14 @@ class HelloEverybodyMyNameIsMarkiplier(ctk.CTk):
                 data = csv.reader(csv_file)
                 for row in data:
                     if row[0] == name and row[2] == password:
-                        self.logged_in = True
-                        HelloEverybodyMyNameIsMarkiplier.destroy(self)  
-                        AndWelcomBackToFiveNightsAtFreddys().mainloop()
+                        global profiles_and_ages
+                        self.logged_in = True 
+                        profiles_and_ages[row[4]] = row[5]
                 if self.logged_in != True:
                     self.check_label.configure(text = "Incorrect username or password") # Changes text when incorrect username or password is entered.
-                
+                else:
+                    HelloEverybodyMyNameIsMarkiplier.destroy(self)
+                    AndWelcomBackToFiveNightsAtFreddys().mainloop()
     
     def _login_build_ui(self):
         self.frame_input = ctk.CTkFrame(self)
@@ -76,13 +80,19 @@ class AndWelcomBackToFiveNightsAtFreddys(ctk.CTk):
         self.resizable(False, False)
         self.main_screen_build()
     def main_screen(self):
-        profiles = ['1', '2', '3']
-        profile_checker = ctk.CTkComboBox(self.frame_main, values = profiles)
-        profile_checker.pack()
+        self.name = ctk.CTkLabel(self.frame_main, padx = (winfo.winfo_screenwidth()/2), text = f"Welcome, {name}")
+        self.name.pack()
+        self.profile_checker = ctk.CTkComboBox(self.frame_main, values = list(profiles_and_ages.keys()), command = self.age_configure)
+        self.profile_checker.pack()
+        self.age = ctk.CTkLabel(self.frame_main, text = f"Age: {profiles_and_ages[self.profile_checker.get()]}")
+        self.age.pack()
     def main_screen_build(self):
         self.frame_main = ctk.CTkFrame(self)
         self.frame_main.pack(fill=ctk.X, padx=(260,20), pady=(30, 0))
         self.main_screen()
+    def age_configure(self, choice):
+        print("Selected:", choice)
+        self.age.configure(text=f"Age: {profiles_and_ages[choice]}")
 
 if __name__ == "__main__":
     markiplier = HelloEverybodyMyNameIsMarkiplier()

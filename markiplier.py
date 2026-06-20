@@ -38,9 +38,11 @@ class HelloEverybodyMyNameIsMarkiplier(ctk.CTk):
                 for row in data:
                     if row[0] == name and row[2] == password:
                         self.logged_in = True
-                        HelloEverybodyMyNameIsMarkiplier.destroy(self)
-                    else:
-                        self.check_label.configure(text = "Incorrect username or password") # This doesn't work!!!
+                        HelloEverybodyMyNameIsMarkiplier.destroy(self)  
+                        AndWelcomBackToFiveNightsAtFreddys().mainloop()
+                if self.logged_in != True:
+                    self.check_label.configure(text = "Incorrect username or password") # This doesn't work!!!
+                
     
     def _login_build_ui(self):
         self.frame_input = ctk.CTkFrame(self)
@@ -71,7 +73,4 @@ class AndWelcomBackToFiveNightsAtFreddys(ctk.CTk):
 
 if __name__ == "__main__":
     markiplier = HelloEverybodyMyNameIsMarkiplier()
-    markiplier.mainloop()    
-    if markiplier.logged_in == True:
-        markiplier = AndWelcomBackToFiveNightsAtFreddys()
-        markiplier.mainloop()
+    markiplier.mainloop()

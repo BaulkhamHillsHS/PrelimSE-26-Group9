@@ -8,15 +8,19 @@ import csv
 from PIL import Image
 #import god as pleasesavethisproject
 
+# Themes
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("blue")
 
+# Screen information
 winfo = tk.Tk()
 winfo.withdraw()
 print(winfo.winfo_screenwidth())
 
-logged_in = True
+# Default state
+logged_in = False
 
+# Login window
 class HelloEverybodyMyNameIsMarkiplier(ctk.CTk):
     def __init__(self):
         super().__init__()
@@ -42,7 +46,7 @@ class HelloEverybodyMyNameIsMarkiplier(ctk.CTk):
                         HelloEverybodyMyNameIsMarkiplier.destroy(self)  
                         AndWelcomBackToFiveNightsAtFreddys().mainloop()
                 if self.logged_in != True:
-                    self.check_label.configure(text = "Incorrect username or password") # This doesn't work!!!
+                    self.check_label.configure(text = "Incorrect username or password") # Changes text when incorrect username or password is entered.
                 
     
     def _login_build_ui(self):
@@ -61,8 +65,8 @@ Nights At Freddy's""").grid(row = 0, column = 0, padx = 20, pady = 20, sticky = 
         self.password_input.grid(row = 2, column = 0, padx = 20, pady = 5, sticky = "n")
         self.button = ctk.CTkButton(self.frame_input, width = 160, height = 28, text = "bite of 87", command=self.button_pressed)
         self.button.grid(row = 4, column = 0, padx = 20, pady = 20, sticky = "n")
-        self.check_label = ctk.CTkLabel(self.frame_input, text = "", anchor = "w", justify = "left")
-        self.check_label.grid(row = 3, column = 0, padx = 20, pady = 20, sticky = "n")
+        self.check_label = ctk.CTkLabel(self.frame_input, text = "Input username and password", anchor = "w", justify = "left")
+        self.check_label.grid(row = 3, column = 0, padx = 20, pady = 0, sticky = "n")
         
 class AndWelcomBackToFiveNightsAtFreddys(ctk.CTk):
     def __init__(self):

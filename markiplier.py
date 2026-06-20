@@ -73,7 +73,7 @@ Nights At Freddy's""").grid(row = 0, column = 1, padx = 20, pady = 20, sticky = 
         self.login_image_label.grid(row = 0, column = 0, rowspan = 5, padx = 20, pady = 20)
     
 
-class AndWelcomBackToFiveNightsAtFreddys(ctk.CTkToplevel):
+class AndWelcomBackToFiveNightsAtFreddys(ctk.CTk):
     def __init__(self):
         super().__init__()
         self.title("butcheks")
@@ -81,7 +81,7 @@ class AndWelcomBackToFiveNightsAtFreddys(ctk.CTkToplevel):
         self.resizable(False, False)
         self.main_screen_build()
     def main_screen(self):
-        self.name = ctk.CTkLabel(self.frame_main, padx = (winfo.winfo_screenwidth()/2), text = f"Welcome, {name}")
+        self.name = ctk.CTkLabel(self.frame_main, padx = 250, text = f"Welcome, {name}")
         self.name.pack()
         self.profile_checker = ctk.CTkComboBox(self.frame_main, values = list(profiles_and_ages.keys()), command = self.age_configure)
         self.profile_checker.pack()

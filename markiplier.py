@@ -18,13 +18,13 @@ logged_in = False
 profiles_and_ages = {}
 
 # Login window
-class HelloEverybodyMyNameIsMarkiplier(ctk.CTk):
+class LoginWindow(ctk.CTk):
     def __init__(self):
         super().__init__()
-        self.title("Hello everybody my name is markiplier")
+        self.title("[REDACTED] Login screen")
         self.geometry(f"450x340+500+200")
         self.resizable(False, False)
-        self._login_build_ui()
+        self._login_ui_build()
         self.logged_in = logged_in
     
     def button_pressed(self):
@@ -45,20 +45,19 @@ class HelloEverybodyMyNameIsMarkiplier(ctk.CTk):
                 if self.logged_in != True:
                     self.check_label.configure(text = "Incorrect username or password") # Changes text when incorrect username or password is entered.
                 else:
-                    HelloEverybodyMyNameIsMarkiplier.destroy(self)
-                    AndWelcomBackToFiveNightsAtFreddys().mainloop()
+                    LoginWindow.destroy(self)
+                    ProfileWindow().mainloop()
     
-    def _login_build_ui(self):
+    def _login_ui_build(self):
         self.frame_input = ctk.CTkFrame(self)
         self.frame_input.pack(fill = ctk.X, padx = (20,20), pady = (30, 0))
-        self._login_build_inputs()
+        self._login_inputs_build()
 
     # Builds login screen
-    def _login_build_inputs(self):
-        self.login_label = ctk.CTkLabel(self.frame_input, text = """Hello everybody my name
-is Markiplier and
-welcome back to Five
-Nights At Freddy's""").grid(row = 0, column = 1, padx = 20, pady = 20, sticky = "n")
+    def _login_inputs_build(self):
+        self.login_label = ctk.CTkLabel(self.frame_input, text = """Hello, welcome to [REDACTED]!
+Please input your username
+and password to log in.""").grid(row = 0, column = 1, padx = 20, pady = 20, sticky = "n")
         self.username_input = ctk.CTkEntry(self.frame_input, width = 160, placeholder_text="Username")
         self.username_input.grid(row = 1, column = 1, padx = 20, pady = 10, sticky = "n")
         self.password_input = ctk.CTkEntry(self.frame_input, width = 160, placeholder_text="Password")
@@ -73,28 +72,44 @@ Nights At Freddy's""").grid(row = 0, column = 1, padx = 20, pady = 20, sticky = 
         self.login_image_label.grid(row = 0, column = 0, rowspan = 5, padx = 20, pady = 20)
     
 
-class AndWelcomBackToFiveNightsAtFreddys(ctk.CTk):
+class ProfileWindow(ctk.CTk):
     def __init__(self):
         super().__init__()
-        self.title("butcheks")
-        self.geometry("500x600+700+50")
+        self.title("[REDACTED] Profile selection screen")
+        self.geometry("500x360+500+200")
         self.resizable(False, False)
+        self.background_build()
         self.main_screen_build()
+    
+    def background_build(self):
+        self.background_image = ctk.CTkImage(light_image = Image.open("images/Background.png"), dark_image = Image.open("images/Background.png"), size = (500, 360))
+        self.background_image_label = ctk.CTkLabel(self, text = "", image = self.background_image)
+        self.background_image_label.place(x = 0, y = 0)
+    
+    def main_screen_build(self):
+        self.frame_main = ctk.CTkFrame(self)
+        self.frame_main.pack(fill=ctk.X, padx=(260,20), pady=(30, 0))
+        self.main_screen()    
+    
     def main_screen(self):
-        self.name = ctk.CTkLabel(self.frame_main, padx = 250, text = f"Welcome, {name}")
+        self.name = ctk.CTkLabel(self.frame_main, padx = 20, pady = 20, text = f"Welcome back, {name}")
         self.name.pack()
         self.profile_checker = ctk.CTkComboBox(self.frame_main, values = list(profiles_and_ages.keys()), command = self.age_configure)
         self.profile_checker.pack()
         self.age = ctk.CTkLabel(self.frame_main, text = f"Age: {profiles_and_ages[self.profile_checker.get()]}")
         self.age.pack()
-    def main_screen_build(self):
-        self.frame_main = ctk.CTkFrame(self)
-        self.frame_main.pack(fill=ctk.X, padx=(260,20), pady=(30, 0))
-        self.main_screen()
+        self.profile_selector = ctk.CTkButton(self.frame_main, width = 100, height = 34, text = "Select profile", command = self.profile_button_pressed)
+        self.profile_selector.pack(pady = 20)
+        
     def age_configure(self, choice):
         print("Selected:", choice)
         self.age.configure(text=f"Age: {profiles_and_ages[choice]}")
+        return choice
+    
+    def profile_button_pressed(self):
+        print("profile button pressed")
+    # should probably be used to like log into specific profiles
 
 if __name__ == "__main__":
-    markiplier = HelloEverybodyMyNameIsMarkiplier()
+    markiplier = LoginWindow()
     markiplier.mainloop()

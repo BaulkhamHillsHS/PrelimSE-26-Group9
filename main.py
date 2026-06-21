@@ -1,400 +1,280 @@
 # Imports
 import customtkinter as ctk
-import tkinter as tk
-import time
-import os
-from tkinter import filedialog, messagebox
+from CTkListbox import *
 import csv
-#import god as pleasesavethisproject
+from PIL import Image
+import ast
 
+## Movies and TV Shows
+movies = {
+    "The Lion King": "child",
+    "Toy Story": "child",
+    "Frozen": "child",
+    "Moana": "child",
+    "Shrek": "child",
+    "Finding Nemo": "child",
+    "Inside Out": "child",
+    "Aladdin": "child",
+    "Up": "child",
+    "Kung Fu Panda": "child",
+    "Harry Potter and the Sorcerer's Stone": "child",
+    "The Incredibles": "child",
+    "Monsters, Inc.": "child",
+    "Zootopia": "child",
+    "Paddington": "child",
+
+    "The Matrix": "adult",
+    "Fight Club": "adult",
+    "Joker": "adult",
+    "Inception": "adult",
+    "Titanic": "adult",
+    "Pulp Fiction": "adult",
+    "The Godfather": "adult",
+    "Parasite": "adult",
+    "Drive": "adult",
+    "Mad Max: Fury Road": "adult"
+}
+anime = {
+    "Naruto": "child",
+    "Pokémon": "child",
+    "Doraemon": "child",
+    "Yo-kai Watch": "child",
+    "Beyblade": "child",
+    "Digimon Adventure": "child",
+    "Cardcaptor Sakura": "child",
+    "Hamtaro": "child",
+    "Chi's Sweet Home": "child",
+    "Anpanman": "child",
+    "Pretty Cure": "child",
+    "Inazuma Eleven": "child",
+
+    "Attack on Titan": "adult",
+    "Death Note": "adult",
+    "Tokyo Ghoul": "adult",
+    "Monster": "adult",
+    "Psycho-Pass": "adult",
+    "Parasyte": "adult",
+    "Black Lagoon": "adult",
+    "Hellsing Ultimate": "adult",
+    "Berserk": "adult",
+    "Vinland Saga": "adult",
+    "Chainsaw Man": "adult",
+    "Devilman Crybaby": "adult",
+    "Perfect Blue": "adult"
+}
+movies = movies | anime
+# Themes
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("blue")
 
-class HelloEverybodyMyNameIsMarkiplier(ctk.CTk):
-    def __init__(self):
+# Default state
+logged_in = False
+
+# Global variable setup
+profiles_and_ages = {}
+watching = ""
+age = ""
+profile = ""
+email = ""
+
+# Login window
+class LoginWindow(ctk.CTk):
+    def __init__(self): ##initialises the window
         super().__init__()
-        self.title("Hello everybody my name is markiplier")
-        self.geometry("500x600+700+50")
+        self.title("Markiflixer Login screen")
+        self.geometry(f"450x310+500+200")
         self.resizable(False, False)
-        self._login_build_ui()
+        self.background_build()
+        self._login_ui_build()
+        self.logged_in = logged_in
     
-    def _login_build_ui(self):
-        self.frame_input = ctk.CTkFrame(self)
-        self.frame_input.pack(fill=ctk.X, padx=20, pady=(20, 10))
-        self._login_build_inputs()
+    def background_build(self): 
+        self.background_image = ctk.CTkImage(light_image = Image.open("images/ui/LoginBackground.png"), dark_image = Image.open("images/ui/LoginBackground.png"), size = (450, 310))
+        self.background_image_label = ctk.CTkLabel(self, text = "", image = self.background_image)
+        self.background_image_label.place(x = 0, y = 0)
+
+    def login_confirm(self): ##matches the data entered with csv to check if user exists
+        with open("data.csv", "r") as csv_file:
+                data = csv.reader(csv_file)
+                next(data)
+                for row in data:
+                    if row[1] == email and row[2] == password:
+                        global profiles_and_ages
+                        global name
+                        self.logged_in = True 
+                        profiles_and_ages[row[4]] = row[5]
+                        name = row[0] ##Saving these variable for later (they are needed)
+
+                if self.logged_in != True:
+                    # Changes text when incorrect email or password is entered.
+                    self.check_label.configure(text_color = "red", text = "Incorrect email or password")
+                else:
+                    LoginWindow.destroy(self)
+                    MainWindow().mainloop()
     
-    def _login_build_inputs(self):
-        self.username_input = ctk.CTkEntry(self.frame_input, width=160, placeholder_text="Username")
-        self.username_input.grid(row = 2, column = 2, padx = 20, pady = 20)
-
-class VetApp(ctk.CTk):
-    """
-    Daily patient log.
-    Demonstrates OOP design: encapsulation, composition, and message-passing.
-    """
-
-    def __init__(self):
-        super().__init__()
-        self.title("Clinic Name - Daily Patient Log")
-        #self.geometry("950x910+0+0")
-        self.resizable(False, False)
-        self.attributes("-fullscreen", True)
-
-        # Private attribute - only accessible through methods (encapsulation)
-        self._notes_window = None       # None means "not open yet"
-        self._record = PatientRecord()
-
-        self._build_ui()
-
-    # ---- UI Construction ----
-
-    def _build_ui(self):
-        """Builds the entire UI. One logical task: constructing the interface."""
-        self._build_input_frame()
-        self._build_log_frame()
-        self._build_file_buttons()
-        self.btn_notes = ctk.CTkButton(
-            self, text="Open Treatment Notes", command=self._open_notes)
-        self.btn_notes.pack(pady=40)
-
-    def _build_input_frame(self):
-        """Creates the patient intake form."""
+    def _login_ui_build(self):
         self.frame_input = ctk.CTkFrame(self)
-        self.frame_input.pack(fill=ctk.X, padx=20, pady=(20, 10))
+        self.frame_input.pack(fill = ctk.X, padx = (20,20), pady = (20, 0))
+        self._login_inputs_build()
 
-        # Pet name
-        ctk.CTkLabel(self.frame_input, text="Pet Name:").grid(
-            row=0, column=0, padx=10, pady=10, sticky="e")
-        self.ent_pet = ctk.CTkEntry(self.frame_input, width=160,
-                                    placeholder_text="e.g. Biscuit")
-        self.ent_pet.grid(row=0, column=1, padx=10, pady=10)
-
-        # Species dropdown
-        ctk.CTkLabel(self.frame_input, text="Species:").grid(
-            row=0, column=2, padx=10, pady=10, sticky="e")
-        self.cmb_species = ctk.CTkComboBox(
-            self.frame_input,
-            values=["Dog", "Cat", "Rabbit", "Bird", "Fish", "Reptile", "Hampterrrrr", "Other"],
-            width=110
-        )
-        self.cmb_species.set("Other")
-        self.cmb_species.grid(row=0, column=3, padx=10, pady=10)
-
-        # Owner name
-        ctk.CTkLabel(self.frame_input, text="Owner:").grid(
-            row=1, column=0, padx=10, pady=10, sticky="e")
-        self.ent_owner = ctk.CTkEntry(self.frame_input, width=160,
-                                      placeholder_text="e.g. Sarah Chen")
-        self.ent_owner.grid(row=1, column=1, padx=10, pady=10)
-
-        # Weight
-        ctk.CTkLabel(self.frame_input, text="Weight (kg):").grid(
-            row=1, column=2, padx=10, pady=10, sticky="e")
-        self.ent_weight = ctk.CTkEntry(self.frame_input, width=110,
-                                       placeholder_text="e.g. 4.5")
-        self.ent_weight.grid(row=1, column=3, padx=10, pady=10)
-
-        # Add button
-        self.btn_add = ctk.CTkButton(self.frame_input, text="Add Patient",
-                                     command=self._add_patient, width=120)
-        self.btn_add.grid(row=0, column=4, rowspan=2, padx=10, pady=10,
-                          sticky="ns")
-
-    def _build_log_frame(self):
-        """Creates the patient log display area."""
-        self.frame_log = ctk.CTkFrame(self)
-        self.frame_log.pack(fill=ctk.BOTH, expand=True, padx=20, pady=(0, 20))
-
-        self.textbox = ctk.CTkTextbox(self.frame_log, width=600, height=230,
-                                       font=("Courier New", 12))
-        self.textbox.pack(padx=10, pady=10)
-
-        self.lbl_summary = ctk.CTkLabel(self.frame_log,
-                                         text="No patients logged yet.",
-                                         font=("Arial", 14, "bold"))
-        self.lbl_summary.pack(pady=(0, 5))
-
-        self.btn_clear = ctk.CTkButton(self.frame_log, text="Clear Log",
-                                        command=self._clear_log,
-                                        fg_color="#8B0000",
-                                        hover_color="#5a0000")
-        self.btn_clear.pack(pady=(0, 10))
+    # Builds login screen
+    def _login_inputs_build(self):
+        self.login_label = ctk.CTkLabel(self.frame_input, text = """Hello, welcome to Markiflixer!
+Please input your email
+and password to log in.""").grid(row = 0, column = 1, padx = 20, pady = 20, sticky = "n")
+        self.username_input = ctk.CTkEntry(self.frame_input, width = 160, placeholder_text="Email")
+        self.username_input.grid(row = 1, column = 1, padx = 20, pady = 10, sticky = "n")
+        self.password_input = ctk.CTkEntry(self.frame_input, width = 160, placeholder_text="Password", show = "*") ##asterisks out the password
+        self.password_input.grid(row = 2, column = 1, padx = 20, pady = 5, sticky = "n")
+        self.button = ctk.CTkButton(self.frame_input, width = 160, height = 28, border_width = 2, fg_color = "#fb86a9", hover_color = "#a7516b", border_color = "#ce0606", text = "Log in", command=self.button_pressed)
+        self.button.grid(row = 4, column = 1, padx = 20, pady = 20, sticky = "n")
+        self.check_label = ctk.CTkLabel(self.frame_input, text = "Input email and password", anchor = "w", justify = "left")
+        self.check_label.grid(row = 3, column = 1, padx = 20, pady = 0, sticky = "n")
         
-    def _build_file_buttons(self):
-        """Save and Load buttons — call this from _build_ui()."""
-        frame = ctk.CTkFrame(self, fg_color="transparent")
-        frame.pack(fill="x", padx=20, pady=(0, 4))
-
-        ctk.CTkButton(frame, text="Save to CSV",
-                      command=self._save_records,
-                      fg_color="#1A7A5E", hover_color="#125C46",
-                      width=140).pack(side=ctk.LEFT, padx=(0, 8))
-
-        ctk.CTkButton(frame, text="Load from CSV",
-                      command=self._load_records,
-                      width=140).pack(side=ctk.LEFT)
-
-        self.lbl_file_status = ctk.CTkLabel(
-            frame, text="No file loaded.", text_color="gray")
-        self.lbl_file_status.pack(side=ctk.LEFT, padx=16)
-
-    # ---- Handle Records ----
-    def _save_records(self):
-        """Opens a Save As dialog, then delegates the write to PatientRecord."""
-        if self._record.get_patient_count() == 0:
-            messagebox.showwarning("Nothing to Save",
-                                   "Add at least one patient before saving.")
-            return
-
-        filepath = filedialog.asksaveasfilename(
-            title="Save Patient Records",
-            defaultextension=".csv",
-            filetypes=[("CSV files", "*.csv"), ("All files", "*.*")],
-            initialfile="patients.csv"
-        )
-        if not filepath:        # user cancelled — do nothing
-            return
-
-        try:
-            self._record.save_to_csv(filepath)      # delegate to data layer
-            self.lbl_file_status.configure(
-                text=f"Saved: {os.path.basename(filepath)}",
-                text_color="green")
-        except Exception as e:
-            messagebox.showerror("Save Error", str(e))
-
-    def _load_records(self):
-        """Opens a file picker, then delegates the read to PatientRecord."""
-        filepath = filedialog.askopenfilename(
-            title="Open Patient Records",
-            filetypes=[("CSV files", "*.csv"), ("All files", "*.*")]
-        )
-        if not filepath:        # user cancelled — do nothing
-            return
-
-        try:
-            self._record.load_from_csv(filepath)    # delegate to data layer
-            self._refresh()
-            count = self._record.get_patient_count()
-            self.lbl_file_status.configure(
-                text=f"Loaded: {os.path.basename(filepath)}  ({count} record(s))",
-                text_color="green")
-        except FileNotFoundError:
-            messagebox.showerror("File Not Found", f"Could not find:\n{filepath}")
-        except (ValueError, KeyError) as e:
-            messagebox.showerror("Load Error",
-                                 f"File could not be read.\n"
-                                 f"Make sure it was saved by this program.\n\n{e}")
-        self._update_log()
+        # Image
+        self.login_image = ctk.CTkImage(light_image = Image.open("images/ui/Markiplier.png"), dark_image = Image.open("images/ui/Markiplier.png"), size = (150, 150))
+        self.login_image_label = ctk.CTkLabel(self.frame_input, text = "", image = self.login_image)
+        self.login_image_label.grid(row = 0, column = 0, rowspan = 5, padx = 20, pady = 20)
     
-    # ---- Display Handling ----
-    
-    def _refresh(self):
-        count = self._record.get_patient_count()
-        avg   = self._record.get_average_weight()
-        self.lbl_summary.configure(
-            text=f"{count} patient(s)  |  Avg weight: {avg:.1f} kg"
-        )
+    def button_pressed(self):
+        global email
+        global password
+        email = self.username_input.get()
+        password = self.password_input.get()
+        self.login_confirm()    ##Links the button to the command given
 
-    def _open_notes(self):
-        """Opens the treatment notes window only if one is not already open."""
-        if self._notes_window is None or not self._notes_window.winfo_exists():
-            self._notes_window = TreatmentNotesWindow(self)
-        else:
-            self._notes_window.focus()  # bring existing window to the front
-            
-    # ---- Business Logic ----
-
-    def _add_patient(self):
-        """Validates the intake form and adds a patient to the log."""
-        pet_name  = self.ent_pet.get().strip()
-        owner     = self.ent_owner.get().strip()
-        species   = self.cmb_species.get()
-        weight_str = self.ent_weight.get().strip()
-
-        # Input validation - SE-11-07: implement safe and secure programming solutions
-        if not pet_name or not owner or not weight_str:
-            self._show_error("All fields are required.")
-            return
-
-        try:
-            weight = float(weight_str)
-        except ValueError:
-            self._show_error("Weight must be a number (e.g. 4.5).")
-            return
-
-        if weight <= 0 or weight > 200:
-            self._show_error("Weight must be between 0 and 200 kg.")
-            return
-
-        self._record.add_patient(pet_name, species, owner, weight)
-
-        self._update_log()
-        self.ent_pet.delete(0, ctk.END)
-        self.ent_owner.delete(0, ctk.END)
-        self.ent_weight.delete(0, ctk.END)
-        self.cmb_species.set("Other")
-
-    def _update_log(self):
-        """Refreshes the log display from the current patient list."""
-        self.textbox.delete("1.0", ctk.END)
-        header = f"{'#':<4} {'Pet':<18} {'Species':<10} {'Owner':<20} {'Weight':>8}\n"
-        self.textbox.insert(ctk.END, header)
-        self.textbox.insert(ctk.END, "-" * 62 + "\n")
-
-        for i, p in enumerate(self._record.get_all(), 1):
-            line = (f"{i:<4} {p['pet']:<18} {p['species']:<10} "
-                    f"{p['owner']:<20} {p['weight']:>6.1f} kg\n")
-            self.textbox.insert(ctk.END, line)
-
-        count = self._record.get_patient_count()
-        avg_weight = sum(p["weight"] for p in self._record.get_all()) / count
-        self.lbl_summary.configure(
-            text=f"{count} patient(s) today  |  Avg weight: {avg_weight:.1f} kg"
-        )
-
-    def _clear_log(self):
-        """Clears the patient list and resets the display."""
-        self._record.clear()
-        self.textbox.delete("1.0", ctk.END)
-        self.lbl_summary.configure(text="No patients logged yet.")
-
-    def _show_error(self, message):
-        """Displays an error message temporarily, then resets after 3 seconds."""
-        self.lbl_summary.configure(text=f"Error: {message}",
-                                    text_color="red")
-        self.after(3000, lambda: self.lbl_summary.configure(
-            text=f"{len(self._record.get_patient_count())} patient(s) today",
-            text_color="white"))            
-
-class TreatmentNotesWindow(ctk.CTkToplevel):
-    """A secondary window for entering treatment notes."""
-
-    def __init__(self, parent):
-        super().__init__(parent)
-        self.title("Treatment Notes")
-        self.geometry("400x300")
-        ctk.CTkLabel(self, text="Enter treatment notes below:").pack(pady=10)
-        self.textbox = ctk.CTkTextbox(self, width=360, height=200)
-        self.textbox.pack(padx=10, pady=5)
-
-class ClinicScreen(ctk.CTk):
-    """
-    Base class for all clinic screens.
-    Provides the standard header - subclasses add their own content below it.
-    Never instantiate this class directly; inherit from it instead.
-    """
-
-    CLINIC_NAME = "Vet Clinic"
-
-    def __init__(self, screen_title):
+##Main movie/show viewing window
+class MainWindow(ctk.CTk):
+    def __init__(self):
         super().__init__()
-        self.geometry("480x380")
-        self.title(f"{self.CLINIC_NAME} - {screen_title}")
-        self._build_header(screen_title)
-        self._build_content()           # calls the subclass version
-
-    def _build_header(self, screen_title):
-        """Shared header - runs automatically for every subclass."""
-        frame_header = ctk.CTkFrame(self, corner_radius=0, fg_color="#0D3B2E")
-        frame_header.pack(fill="x")
-        ctk.CTkLabel(frame_header, text=self.CLINIC_NAME,
-                     text_color="#A8D8C8").pack(side=ctk.LEFT, padx=14, pady=8)
-        ctk.CTkLabel(frame_header, text=screen_title,
-                     font=ctk.CTkFont(size=14, weight="bold"),
-                     text_color="white").pack(side=ctk.RIGHT, padx=14, pady=8)
-
-    def _build_content(self):
-        """Override in subclasses to add screen-specific widgets."""
-        pass
-
-class PatientIntakeScreen(ClinicScreen):
-    """Intake form - inherits the header, adds its own form."""
-
-    def __init__(self):
-        super().__init__("Patient Intake")  # passes the title up to ClinicScreen
-
-    def _build_content(self):
-        # Intake-specific widgets go here
-        ctk.CTkButton(self, text="Check In Patient").pack(pady=40)
-
-class TreatmentScreen(ClinicScreen):
-    """Treatment notes - same header, completely different content."""
-
-    def __init__(self):
-        super().__init__("Treatment Notes")
-
-    def _build_content(self):
-        self.textbox = ctk.CTkTextbox(self, width=430, height=220)
-        self.textbox.pack(padx=20, pady=20)
-
-class PatientRecord:
-    FIELDS = ["pet", "species", "owner", "weight"]  # column names used in CSV
-
-    """
-    Stores and manages vet clinic patient data.
-    No GUI dependencies - this class can be tested without a window.
-    """
-
-    def __init__(self):
-        self._patients = []             # private - encapsulation
-
-    def add_patient(self, pet_name, species, owner, weight):
-        self._patients.append({
-            "pet": pet_name,
-            "species": species,
-            "owner": owner,
-            "weight": weight,
-        })
-
-    def get_patient_count(self):
-        return len(self._patients)
-
-    def get_average_weight(self):
-        if not self._patients:
-            return 0.0
-        return sum(p["weight"] for p in self._patients) / len(self._patients)
-
-    def get_all(self):
-        return list(self._patients)     # returns a copy, not original list
-
-    def clear(self):
-        self._patients.clear()
+        self.title("Markiflixer Profile selection screen")
+        self.geometry("600x400+500+150")
+        self.grid_rowconfigure(1, weight = 1)
+        self.grid_columnconfigure(2, weight = 0)
+        self.resizable(False, False)
+        self.background_build()
+        self.main_screen_build()
     
-    def save_to_csv(self, filepath):
-        """
-        Writes all current patient records to a CSV file.
-
-        The file will look like this:
-            pet,species,owner,weight
-            Biscuit,Dog,Sarah Chen,12.4
-            Mochi,Cat,James Park,4.1
-        """
-        with open(filepath, "w", newline="") as f:
-            writer = csv.DictWriter(f, fieldnames=self.FIELDS)
-            writer.writeheader()        # writes the column name row
-            writer.writerows(self._patients)
+    def background_build(self):
+        self.background_image = ctk.CTkImage(light_image = Image.open("images/ui/ProfileBackground.png"), dark_image = Image.open("images/ui/ProfileBackground.png"), size = (600, 400))
+        self.background_image_label = ctk.CTkLabel(self, text = "", image = self.background_image)
+        self.background_image_label.place(x = 0, y = 0)
     
-    def load_from_csv(self, filepath):
-        """
-        Reads patient records from a CSV file, replacing current records.
+    def main_screen_build(self): ##Separating background and main screan for cleanliness
+        self.frame_main = ctk.CTkFrame(self)
+        self.frame_main.grid(column = 1, row = 0, padx = 30, pady = 25)
+        self.frame_search = ctk.CTkFrame(self)
+        self.frame_search.grid(column = 0, row = 0, rowspan = 2, padx = (50,20), pady = 10)
+        self.main_screen_image = ctk.CTkImage(light_image = Image.open("images/ui/Markiplier.png"), dark_image = Image.open("images/ui/Markiplier.png"), size = (100, 100))
+        self.main_screen_image_label = ctk.CTkLabel(self, text = "", image = self.main_screen_image)
+        self.main_screen_image_label.grid(row = 1, column = 1, padx = 20, pady = (10,20))
+        self.main_screen()
+        self.search_screen()    
+    
+    def main_screen(self):
+        self.name = ctk.CTkLabel(self.frame_main, padx = 20, pady = 20, text = f"Welcome back, {name}!\nChoose your profile below.")
+        self.name.pack()
+        self.profile_checker = ctk.CTkComboBox(self.frame_main, values = list(profiles_and_ages.keys()), command = self.age_configure)
+        self.profile_checker.pack()
+        self.profile_checker.set(list(profiles_and_ages.keys())[0])
+        global profile, age
+        profile = self.profile_checker.get()
+        age = profiles_and_ages[profile]
+        self.age = ctk.CTkLabel(self.frame_main, text=f"Age: {age}")
+        self.age.pack()
+        self.profile_selector = ctk.CTkButton(self.frame_main, width = 100, height = 34, border_width = 2, fg_color = "#fb86a9", hover_color = "#a7516b", border_color = "#ce0606", text = "Exit", command = self.exit_button_pressed)
+        self.profile_selector.pack(pady = 20)
+    
+    def search_screen(self): ##Uses the community addon for ctk Listbox, emulating the tkinter listbox
+        self.entry_box = ctk.CTkEntry(self.frame_search, width = 220, placeholder_text = "Shrek...")
+        self.entry_box.pack(padx = 20, pady = 20)
+        self.search_button = ctk.CTkButton(self.frame_search, border_width = 2, fg_color = "#fb86a9", hover_color = "#a7516b", border_color = "#ce0606", text="search", command=self.search, width = 220)
+        self.search_button.pack()
+        self.movies_box = CTkListbox(self.frame_search, height = 220, command=self.show_value)
+        self.movies_box.pack(fill="both", expand=True, padx=10, pady=10)
+        for item in movies.keys():
+            self.movies_box.insert("end", item)
+            
+    def search(self): ##Refreshing the search box
+        query = self.entry_box.get().lower()
+        self.movies_box.delete(0, "end")
+        for item in movies.keys():
+            if query in item.lower():
+                self.movies_box.insert("end", item)
+                
+    def age_configure(self, choice):
+        global age
+        global profile
+        age = profiles_and_ages[choice]
+        profile = choice
+        self.age.configure(text=f"Age: {profiles_and_ages[choice]}")
+        return choice
+    
+    def show_value(self, selected_option):
+        global watching
+        watching = selected_option
+        self.destroy()
+        media = MediaWindow()
+        media.mainloop()
+    
+    def exit_button_pressed(self):
+        self.destroy()
+    # Exits application
 
-        weight is stored as a string in the file — float() converts it back.
-        """
-        self._patients.clear()
-        with open(filepath, "r", newline="") as f:
-            reader = csv.DictReader(f)
-            for row in reader:
-                self._patients.append({
-                    "pet":     row["pet"],
-                    "species": row["species"],
-                    "owner":   row["owner"],
-                    "weight":  float(row["weight"]),   # string → float
-                })
+class MediaWindow(ctk.CTk):
+    def __init__(self):
+        super().__init__()
+        self.title("Media Player")
+        self.geometry("600x400+500+150")
+        self.grid_rowconfigure(1, weight = 1)
+        self.grid_columnconfigure(2, weight = 0)
+        self.resizable(False, False)
+        self.background_build()
+    
+    def background_build(self):
+        self.background_image = ctk.CTkImage(light_image = Image.open("images/ui/ProfileBackground.png"), dark_image = Image.open("images/ui/ProfileBackground.png"), size = (600, 400))
+        self.background_image_label = ctk.CTkLabel(self, text = "", image = self.background_image)
+        self.background_image_label.place(x = 0, y = 0)
+        self.watching = ctk.CTkLabel(self, text = watching)
+        self.watching.pack()
+        try: ##Just in case there is no image
+            self.media_image = ctk.CTkImage(light_image = Image.open(f"images/posters/{watching}.webp"), dark_image = Image.open(f"images/posters/{watching}.webp"), size = (500, 300))
+            self.media_image_label = ctk.CTkLabel(self, text = "", image = self.media_image)
+            self.media_image_label.pack()
+        except FileNotFoundError: ##make sure a missing or broken image doesnt break program
+            pass
+        self.watch_button = ctk.CTkButton(self, width = 240, border_width = 2, fg_color = "#fb86a9", hover_color = "#a7516b", border_color = "#ce0606", text = "Watch" if watching not in anime else "Watch Next Episode", command = self.watch_check)
+        self.watch_button.pack()
+        self.return_button = ctk.CTkButton(self, width = 100, border_width = 2, fg_color = "#fb86a9", hover_color = "#a7516b", border_color = "#ce0606", text = "Return to main menu", command = self.go_back)
+        self.return_button.pack()
 
+    def watch_check(self):
+        if age.lower() == "child" and movies[watching] == "adult": ##content filtering
+            self.watch_button.configure(text = "ERROR age does not meet requirement", state = "disabled")
+        else: ##opens corresponding text file thank goodness for fstrings
+            with open(f"profiles/{profile}.txt", "r", encoding="utf-8") as file:
+                content = file.read()
+            watchhistory = ast.literal_eval(content or "[]")
+            if watching not in anime:
+                if watching not in watchhistory:
+                    watchhistory.append(watching)
+                with open(f"profiles/{profile}.txt", "w", encoding="utf-8") as file:
+                    file.write(str(watchhistory))
+            else: ##Appends episodes as tvshow1, tvshow2 etc
+                episode = 1
+                while f"{watching}{str(episode)}" in watchhistory:
+                    episode += 1
+                if f"{watching}{str(episode)}" not in watchhistory:
+                    watchhistory.append(f"{watching}{str(episode)}")
+                    with open(f"profiles/{profile}.txt", "w", encoding="utf-8") as file:
+                        file.write(str(watchhistory))
+                
+        
+    def go_back(self):
+        self.destroy()        
+        main = MainWindow()
+        main.mainloop()
 
 if __name__ == "__main__":
-    appy = HelloEverybodyMyNameIsMarkiplier()
-    appy.mainloop()    
-    app = VetApp()
-    app.mainloop()
+    markiplier = LoginWindow()
+    markiplier.mainloop()

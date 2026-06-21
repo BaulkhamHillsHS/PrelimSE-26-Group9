@@ -1,12 +1,44 @@
 # Imports
 import customtkinter as ctk
 import tkinter as tk
+from CTkListbox import *
 import time
 import os
 from tkinter import filedialog, messagebox
 import csv
 from PIL import Image
 #import god as pleasesavethisproject
+
+## Movies and TV Shows
+movies = {
+    "The Lion King": "child",
+    "Toy Story": "child",
+    "Frozen": "child",
+    "Moana": "child",
+    "Shrek": "child",
+    "Finding Nemo": "child",
+    "Inside Out": "child",
+    "Aladdin": "child",
+    "Up": "child",
+    "Kung Fu Panda": "child",
+    "Harry Potter and the Sorcerer's Stone": "child",
+    "The Incredibles": "child",
+    "Monsters, Inc.": "child",
+    "Zootopia": "child",
+    "Paddington": "child",
+
+    "The Matrix": "adult",
+    "Fight Club": "adult",
+    "Joker": "adult",
+    "Inception": "adult",
+    "Titanic": "adult",
+    "Pulp Fiction": "adult",
+    "The Godfather": "adult",
+    "Parasite": "adult",
+    "Drive": "adult",
+    "Mad Max: Fury Road": "adult"
+}
+
 
 # Themes
 ctk.set_appearance_mode("dark")
@@ -46,7 +78,7 @@ class LoginWindow(ctk.CTk):
                     self.check_label.configure(text = "Incorrect username or password") # Changes text when incorrect username or password is entered.
                 else:
                     LoginWindow.destroy(self)
-                    ProfileWindow().mainloop()
+                    MainWindow().mainloop()
     
     def _login_ui_build(self):
         self.frame_input = ctk.CTkFrame(self)
@@ -72,7 +104,7 @@ and password to log in.""").grid(row = 0, column = 1, padx = 20, pady = 20, stic
         self.login_image_label.grid(row = 0, column = 0, rowspan = 5, padx = 20, pady = 20)
     
 
-class ProfileWindow(ctk.CTk):
+class MainWindow(ctk.CTk):
     def __init__(self):
         super().__init__()
         self.title("[REDACTED] Profile selection screen")
@@ -88,8 +120,11 @@ class ProfileWindow(ctk.CTk):
     
     def main_screen_build(self):
         self.frame_main = ctk.CTkFrame(self)
-        self.frame_main.pack(fill=ctk.X, padx=(260,20), pady=(30, 0))
-        self.main_screen()    
+        self.frame_main.grid(column = 1, row = 0)
+        self.frame_search = ctk.CTkFrame(self)
+        self.frame_search.grid(column = 0, row = 0)
+        self.main_screen()
+        self.search_screen()    
     
     def main_screen(self):
         self.name = ctk.CTkLabel(self.frame_main, padx = 20, pady = 20, text = f"Welcome back, {name}")
@@ -100,11 +135,28 @@ class ProfileWindow(ctk.CTk):
         self.age.pack()
         self.profile_selector = ctk.CTkButton(self.frame_main, width = 100, height = 34, text = "Select profile", command = self.profile_button_pressed)
         self.profile_selector.pack(pady = 20)
-        
+    
+    def search_screen(self):
+        self.entry_box = ctk.CTkEntry(self.frame_search)
+        self.entry_box.pack()
+        self.search_button = ctk.CTkButton(self.frame_search, text="search", command=self.search)
+        self.search_button.pack()
+        self.movies_box = CTkListbox(self.frame_search, command=self.show_value)
+        self.movies_box.pack(fill="both", expand=True, padx=10, pady=10)
+        for item in movies.keys():
+            self.movies_box.insert("end", item)
+    def search(self):
+        query = self.entry_box.get().lower()
+        self.movies_box.delete(0, "end")
+        for item in movies.keys():
+            if query in item.lower():
+                self.movies_box.insert("end", item)
     def age_configure(self, choice):
         print("Selected:", choice)
         self.age.configure(text=f"Age: {profiles_and_ages[choice]}")
         return choice
+    def show_value(self, selected_option):
+        print(movies[selected_option])
     
     def profile_button_pressed(self):
         print("profile button pressed")

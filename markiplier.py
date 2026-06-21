@@ -96,6 +96,7 @@ class LoginWindow(ctk.CTk):
     def login_confirm(self): ##matches the data entered with csv to check if user exists
         with open("data.csv", "r") as csv_file:
                 data = csv.reader(csv_file)
+                next(data)
                 for row in data:
                     if row[1] == email and row[2] == password:
                         global profiles_and_ages

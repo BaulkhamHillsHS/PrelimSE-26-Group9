@@ -124,7 +124,7 @@ and password to log in.""").grid(row = 0, column = 1, padx = 20, pady = 20, stic
         self.username_input.grid(row = 1, column = 1, padx = 20, pady = 10, sticky = "n")
         self.password_input = ctk.CTkEntry(self.frame_input, width = 160, placeholder_text="Password", show = "*")
         self.password_input.grid(row = 2, column = 1, padx = 20, pady = 5, sticky = "n")
-        self.button = ctk.CTkButton(self.frame_input, width = 160, height = 28, text = "Log in", command=self.button_pressed)
+        self.button = ctk.CTkButton(self.frame_input, width = 160, height = 28, border_width = 2, fg_color = "#fb86a9", hover_color = "#a7516b", border_color = "#ce0606", text = "Log in", command=self.button_pressed)
         self.button.grid(row = 4, column = 1, padx = 20, pady = 20, sticky = "n")
         self.check_label = ctk.CTkLabel(self.frame_input, text = "Input username and password", anchor = "w", justify = "left")
         self.check_label.grid(row = 3, column = 1, padx = 20, pady = 0, sticky = "n")
@@ -179,13 +179,13 @@ class MainWindow(ctk.CTk):
         age = profiles_and_ages[profile]
         self.age = ctk.CTkLabel(self.frame_main, text=f"Age: {age}")
         self.age.pack()
-        self.profile_selector = ctk.CTkButton(self.frame_main, width = 100, height = 34, text = "Select profile", command = self.profile_button_pressed)
+        self.profile_selector = ctk.CTkButton(self.frame_main, width = 100, height = 34, border_width = 2, fg_color = "#fb86a9", hover_color = "#a7516b", border_color = "#ce0606", text = "Exit", command = self.exit_button_pressed)
         self.profile_selector.pack(pady = 20)
     
     def search_screen(self):
         self.entry_box = ctk.CTkEntry(self.frame_search, width = 220, placeholder_text = "Shrek...")
         self.entry_box.pack(padx = 20, pady = 20)
-        self.search_button = ctk.CTkButton(self.frame_search, text="search", command=self.search, width = 220)
+        self.search_button = ctk.CTkButton(self.frame_search, border_width = 2, fg_color = "#fb86a9", hover_color = "#a7516b", border_color = "#ce0606", text="search", command=self.search, width = 220)
         self.search_button.pack()
         self.movies_box = CTkListbox(self.frame_search, height = 220, command=self.show_value)
         self.movies_box.pack(fill="both", expand=True, padx=10, pady=10)
@@ -214,9 +214,9 @@ class MainWindow(ctk.CTk):
         media = MediaWindow()
         media.mainloop()
     
-    def profile_button_pressed(self):
-        print("profile button pressed")
-    # should probably be used to like log into specific profiles
+    def exit_button_pressed(self):
+        self.destroy()
+    # Exits application
 
 class MediaWindow(ctk.CTk):
     def __init__(self):
@@ -235,12 +235,14 @@ class MediaWindow(ctk.CTk):
         self.background_image_label.place(x = 0, y = 0)
         self.watching = ctk.CTkLabel(self, text = watching)
         self.watching.pack()
-        self.watch_button = ctk.CTkButton(self, text = "Watch", command = self.watch_check)
+        self.watch_button = ctk.CTkButton(self, width = 240, border_width = 2, fg_color = "#fb86a9", hover_color = "#a7516b", border_color = "#ce0606", text = "Watch", command = self.watch_check)
         self.watch_button.pack()
+        self.return_button = ctk.CTkButton(self, width = 100, border_width = 2, fg_color = "#fb86a9", hover_color = "#a7516b", border_color = "#ce0606", text = "Return to main menu", command = self.go_back)
+        self.return_button.pack()
 
     def watch_check(self):
         if age.lower() == "child" and movies[watching] == "adult":
-            ##Jonathan can you make like an error label like you did for password above
+            self.watch_button.configure(text = "ERROR age does not meet requirement", state = "disabled")
             pass
         else:
             with open(f"profiles/{profile}.txt", "r", encoding="utf-8") as file:
@@ -250,6 +252,13 @@ class MediaWindow(ctk.CTk):
                 watchhistory.append(watching)
             with open(f"profiles/{profile}.txt", "w", encoding="utf-8") as file:
                 file.write(str(watchhistory))
+        
+    def go_back(self):
+        self.destroy()        
+        main = MainWindow()
+        main.mainloop()
+
+
 
 
 if __name__ == "__main__":

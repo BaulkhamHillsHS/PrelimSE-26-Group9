@@ -1,14 +1,9 @@
 # Imports
 import customtkinter as ctk
-import tkinter as tk
 from CTkListbox import *
-import time
-import os
-from tkinter import filedialog, messagebox
 import csv
 from PIL import Image
 import ast
-#import god as pleasesavethisproject
 
 ## Movies and TV Shows
 movies = {
@@ -75,13 +70,16 @@ ctk.set_default_color_theme("blue")
 # Default state
 logged_in = False
 
+# Global variable setup
 profiles_and_ages = {}
 watching = ""
 age = ""
 profile = ""
+email = ""
+
 # Login window
 class LoginWindow(ctk.CTk):
-    def __init__(self):
+    def __init__(self): ##initialises the window
         super().__init__()
         self.title("Markiflixer Login screen")
         self.geometry(f"450x310+500+200")
@@ -90,22 +88,25 @@ class LoginWindow(ctk.CTk):
         self._login_ui_build()
         self.logged_in = logged_in
     
-    def background_build(self):
+    def background_build(self): 
         self.background_image = ctk.CTkImage(light_image = Image.open("images/ui/LoginBackground.png"), dark_image = Image.open("images/ui/LoginBackground.png"), size = (450, 310))
         self.background_image_label = ctk.CTkLabel(self, text = "", image = self.background_image)
         self.background_image_label.place(x = 0, y = 0)
 
-    def login_confirm(self):
+    def login_confirm(self): ##matches the data entered with csv to check if user exists
         with open("data.csv", "r") as csv_file:
                 data = csv.reader(csv_file)
                 for row in data:
-                    if row[0] == name and row[2] == password:
+                    if row[1] == email and row[2] == password:
                         global profiles_and_ages
+                        global name
                         self.logged_in = True 
                         profiles_and_ages[row[4]] = row[5]
+                        name = row[0] ##Saving these variable for later (they are needed)
+
                 if self.logged_in != True:
-                    # Changes text when incorrect username or password is entered.
-                    self.check_label.configure(text_color = "red", text = "Incorrect username or password")
+                    # Changes text when incorrect email or password is entered.
+                    self.check_label.configure(text_color = "red", text = "Incorrect email or password")
                 else:
                     LoginWindow.destroy(self)
                     MainWindow().mainloop()
@@ -118,15 +119,15 @@ class LoginWindow(ctk.CTk):
     # Builds login screen
     def _login_inputs_build(self):
         self.login_label = ctk.CTkLabel(self.frame_input, text = """Hello, welcome to Markiflixer!
-Please input your username
+Please input your email
 and password to log in.""").grid(row = 0, column = 1, padx = 20, pady = 20, sticky = "n")
-        self.username_input = ctk.CTkEntry(self.frame_input, width = 160, placeholder_text="Username")
+        self.username_input = ctk.CTkEntry(self.frame_input, width = 160, placeholder_text="Email")
         self.username_input.grid(row = 1, column = 1, padx = 20, pady = 10, sticky = "n")
-        self.password_input = ctk.CTkEntry(self.frame_input, width = 160, placeholder_text="Password", show = "*")
+        self.password_input = ctk.CTkEntry(self.frame_input, width = 160, placeholder_text="Password", show = "*") ##asterisks out the password
         self.password_input.grid(row = 2, column = 1, padx = 20, pady = 5, sticky = "n")
         self.button = ctk.CTkButton(self.frame_input, width = 160, height = 28, border_width = 2, fg_color = "#fb86a9", hover_color = "#a7516b", border_color = "#ce0606", text = "Log in", command=self.button_pressed)
         self.button.grid(row = 4, column = 1, padx = 20, pady = 20, sticky = "n")
-        self.check_label = ctk.CTkLabel(self.frame_input, text = "Input username and password", anchor = "w", justify = "left")
+        self.check_label = ctk.CTkLabel(self.frame_input, text = "Input email and password", anchor = "w", justify = "left")
         self.check_label.grid(row = 3, column = 1, padx = 20, pady = 0, sticky = "n")
         
         # Image
@@ -135,12 +136,13 @@ and password to log in.""").grid(row = 0, column = 1, padx = 20, pady = 20, stic
         self.login_image_label.grid(row = 0, column = 0, rowspan = 5, padx = 20, pady = 20)
     
     def button_pressed(self):
-        global name
+        global email
         global password
-        name = self.username_input.get()
+        email = self.username_input.get()
         password = self.password_input.get()
-        self.login_confirm()    
+        self.login_confirm()    ##Links the button to the command given
 
+##Main movie/show viewing window
 class MainWindow(ctk.CTk):
     def __init__(self):
         super().__init__()
@@ -157,7 +159,7 @@ class MainWindow(ctk.CTk):
         self.background_image_label = ctk.CTkLabel(self, text = "", image = self.background_image)
         self.background_image_label.place(x = 0, y = 0)
     
-    def main_screen_build(self):
+    def main_screen_build(self): ##Separating background and main screan for cleanliness
         self.frame_main = ctk.CTkFrame(self)
         self.frame_main.grid(column = 1, row = 0, padx = 30, pady = 25)
         self.frame_search = ctk.CTkFrame(self)
@@ -182,7 +184,7 @@ class MainWindow(ctk.CTk):
         self.profile_selector = ctk.CTkButton(self.frame_main, width = 100, height = 34, border_width = 2, fg_color = "#fb86a9", hover_color = "#a7516b", border_color = "#ce0606", text = "Exit", command = self.exit_button_pressed)
         self.profile_selector.pack(pady = 20)
     
-    def search_screen(self):
+    def search_screen(self): ##Uses the community addon for ctk Listbox, emulating the tkinter listbox
         self.entry_box = ctk.CTkEntry(self.frame_search, width = 220, placeholder_text = "Shrek...")
         self.entry_box.pack(padx = 20, pady = 20)
         self.search_button = ctk.CTkButton(self.frame_search, border_width = 2, fg_color = "#fb86a9", hover_color = "#a7516b", border_color = "#ce0606", text="search", command=self.search, width = 220)
@@ -192,7 +194,7 @@ class MainWindow(ctk.CTk):
         for item in movies.keys():
             self.movies_box.insert("end", item)
             
-    def search(self):
+    def search(self): ##Refreshing the search box
         query = self.entry_box.get().lower()
         self.movies_box.delete(0, "end")
         for item in movies.keys():
@@ -227,7 +229,6 @@ class MediaWindow(ctk.CTk):
         self.grid_columnconfigure(2, weight = 0)
         self.resizable(False, False)
         self.background_build()
-        ##self.main_screen_build()
     
     def background_build(self):
         self.background_image = ctk.CTkImage(light_image = Image.open("images/ui/ProfileBackground.png"), dark_image = Image.open("images/ui/ProfileBackground.png"), size = (600, 400))
@@ -235,31 +236,43 @@ class MediaWindow(ctk.CTk):
         self.background_image_label.place(x = 0, y = 0)
         self.watching = ctk.CTkLabel(self, text = watching)
         self.watching.pack()
-        self.watch_button = ctk.CTkButton(self, width = 240, border_width = 2, fg_color = "#fb86a9", hover_color = "#a7516b", border_color = "#ce0606", text = "Watch", command = self.watch_check)
+        try: ##Just in case there is no image
+            self.media_image = ctk.CTkImage(light_image = Image.open(f"images/posters/{watching}.webp"), dark_image = Image.open(f"images/posters/{watching}.webp"), size = (500, 300))
+            self.media_image_label = ctk.CTkLabel(self, text = "", image = self.media_image)
+            self.media_image_label.pack()
+        except FileNotFoundError: ##make sure a missing or broken image doesnt break program
+            pass
+        self.watch_button = ctk.CTkButton(self, width = 240, border_width = 2, fg_color = "#fb86a9", hover_color = "#a7516b", border_color = "#ce0606", text = "Watch" if watching not in anime else "Watch Next Episode", command = self.watch_check)
         self.watch_button.pack()
         self.return_button = ctk.CTkButton(self, width = 100, border_width = 2, fg_color = "#fb86a9", hover_color = "#a7516b", border_color = "#ce0606", text = "Return to main menu", command = self.go_back)
         self.return_button.pack()
 
     def watch_check(self):
-        if age.lower() == "child" and movies[watching] == "adult":
+        if age.lower() == "child" and movies[watching] == "adult": ##content filtering
             self.watch_button.configure(text = "ERROR age does not meet requirement", state = "disabled")
-            pass
-        else:
+        else: ##opens corresponding text file thank goodness for fstrings
             with open(f"profiles/{profile}.txt", "r", encoding="utf-8") as file:
                 content = file.read()
             watchhistory = ast.literal_eval(content or "[]")
-            if watching not in watchhistory:
-                watchhistory.append(watching)
-            with open(f"profiles/{profile}.txt", "w", encoding="utf-8") as file:
-                file.write(str(watchhistory))
+            if watching not in anime:
+                if watching not in watchhistory:
+                    watchhistory.append(watching)
+                with open(f"profiles/{profile}.txt", "w", encoding="utf-8") as file:
+                    file.write(str(watchhistory))
+            else: ##Appends episodes as tvshow1, tvshow2 etc
+                episode = 1
+                while f"{watching}{str(episode)}" in watchhistory:
+                    episode += 1
+                if f"{watching}{str(episode)}" not in watchhistory:
+                    watchhistory.append(f"{watching}{str(episode)}")
+                    with open(f"profiles/{profile}.txt", "w", encoding="utf-8") as file:
+                        file.write(str(watchhistory))
+                
         
     def go_back(self):
         self.destroy()        
         main = MainWindow()
         main.mainloop()
-
-
-
 
 if __name__ == "__main__":
     markiplier = LoginWindow()
